@@ -91,6 +91,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, AlertCircle, XCircle } from 'lucide-react';
+import Hero from '../../../components/sections/Hero';
 
 export default function VinSearchSection() {
   const [vin, setVin] = useState('');
@@ -124,8 +125,10 @@ export default function VinSearchSection() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <>
+      <Hero />
+      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
         {/* Title */}
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
@@ -183,7 +186,7 @@ export default function VinSearchSection() {
           {/* Error Message */}
           {showError && (
             <div className="mt-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-2 animate-fade-in">
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 shrink-0" />
               <span>VIN must be exactly 17 characters</span>
             </div>
           )}
@@ -204,7 +207,8 @@ export default function VinSearchSection() {
           ))}
         </div>
 
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

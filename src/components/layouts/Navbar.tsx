@@ -1,127 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Globe, Search } from "lucide-react";
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+const imgEllipse2643 =
+  "http://localhost:3845/assets/08dedbb5c2ecb10f07bd163945ac9407121680d5.png";
+const imgEllipse2644 =
+  "http://localhost:3845/assets/d45e4f914c108ea888fe8bacf7ad8b9a9a42a510.png";
+const imgEllipse2645 =
+  "http://localhost:3845/assets/c9c05ab30dc682aee262a81393ecbcfdba7279fe.png";
+const Logo =
+  "http://localhost:3845/assets/7882751f98bb060e14223d93a17047153aff47c4.svg";
+const imgVector5325 =
+  "http://localhost:3845/assets/f33c210151e1da77ff7ed774ad16651640006b94.svg";
+const imgMagnifyingGlass =
+  "http://localhost:3845/assets/d08036363f4311e53184c28d1172bb2b4ab38d28.svg";
+const imgUser =
+  "http://localhost:3845/assets/85a626d0e7bacdd9fd2524c779141ee82310edf0.svg";
 
-  const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/about-us" },
-    { name: "Contact", href: "/contact" },
-    { name: "Privacy", href: "/privacy" },
-    { name: "Terms", href: "/terms" },
-    { name: "VIN Search", href: "/vinSearch" },
-  ];
-
+export default function FigmaSelectedFrame() {
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <Globe className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-xl text-gray-900">Globe VIN</span>
-            </Link>
-          </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`${pathname === item.href ? "text-blue-600" : "text-gray-700 hover:text-blue-600"} font-medium transition-colors`}
-                aria-current={pathname === item.href ? "page" : undefined}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Right Side - Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Customers Badge */}
-            <div className="flex items-center space-x-1 bg-gray-100 px-3 py-1 rounded-full">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-              <span className="text-sm font-semibold text-gray-700">
-                10K+ Customers
-              </span>
-            </div>
-
-            {/* User Avatar */}
-            <button className="w-9 h-9 rounded-full bg-gray-300 border-2 border-dashed border-gray-400"></button>
-
-            {/* Search Icon */}
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <Search className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
-            >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
+    <header className="flex items-center justify-between w-full px-4 md:px-10 py-3 md:py-5">
+      {/* Left Section - Logo & Nav */}
+      <div className="flex items-center gap-6 md:gap-20">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <Image src={Logo} alt="logo" width={40} height={48} />
+          <p className="text-lg md:text-xl font-medium italic text-black">
+            Globe VIN
+          </p>
         </div>
+
+        {/* Nav Links */}
+        <nav className="hidden md:flex gap-6 text-sm md:text-base text-[#919193]">
+          <p className="text-black cursor-pointer">Home</p>
+          <p className="hover:text-black cursor-pointer">Sample Report</p>
+          <p className="hover:text-black cursor-pointer">API Config</p>
+          <Link href="/vinSearch" className="hover:text-black cursor-pointer">VIN Search</Link>
+          <Link href="/dashboard" className="hover:text-black cursor-pointer">Dashboard</Link>
+          <p className="hover:text-black cursor-pointer">About Us</p>
+        </nav>
       </div>
 
-      {/* Mobile Menu */}
-          {isOpen && (
-            <div className="md:hidden border-t border-gray-200 bg-white">
-              <div className="px-4 pt-2 pb-3 space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`block px-3 py-2 rounded-md text-base font-medium ${pathname === item.href ? "text-blue-600 bg-gray-100" : "text-gray-700 hover:bg-gray-100"}`}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-
-            <div className="pt-4 pb-3 border-t border-gray-200">
-              <div className="flex items-center space-x-3 px-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-                <span className="text-sm font-semibold text-gray-700">
-                  10K+ Customers
-                </span>
-              </div>
-
-              <div className="mt-3 px-3 flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-gray-300 border-2 border-dashed border-gray-400"></div>
-                <span className="text-sm font-medium text-gray-700">
-                  My Account
-                </span>
-              </div>
-
-              <div className="mt-3 px-3">
-                <button className="w-full flex items-center justify-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition">
-                  <Search className="w-4 h-4" />
-                  <span>Search</span>
-                </button>
-              </div>
-            </div>
+      {/* Right Section */}
+      <div className="flex items-center gap-3 md:gap-5">
+        {/* Customer Group */}
+        <div className="flex items-center border border-[#c7c7c7] rounded-full px-3 py-2 md:px-4">
+          <div className="flex -space-x-3">
+            <Image
+              src={imgEllipse2643}
+              alt="customer1"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
+            <Image
+              src={imgEllipse2644}
+              alt="customer2"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
+            <Image
+              src={imgEllipse2645}
+              alt="customer3"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
           </div>
+          <p className="ml-3 text-sm md:text-base text-black">10K+ Customers</p>
         </div>
-      )}
-    </nav>
+
+        {/* Divider */}
+        <div className="hidden md:block h-10 w-px bg-gray-300" />
+
+        {/* Icons */}
+        <div className="flex items-center gap-2 md:gap-3">
+          <button className="bg-black rounded-full p-2 md:p-2.5 hover:opacity-80 transition">
+            <Image
+              src={imgMagnifyingGlass}
+              alt="Search"
+              width={24}
+              height={24}
+              className="invert"
+            />
+          </button>
+          <button className="bg-white border border-[#c7c7c7] rounded-full p-2 md:p-2.5 hover:bg-gray-50 transition">
+            <Image src={imgUser} alt="User" width={24} height={24} />
+          </button>
+        </div>
+      </div>
+    </header>
   );
 }

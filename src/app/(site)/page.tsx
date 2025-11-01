@@ -1,7 +1,8 @@
 import { Layers } from "lucide-react";
-import Hero from "../components/sections/Hero";
-import PricingCard from "../components/Pricing-card";
-import TestimonialCarousel from "../components/TestimonialCarousel";
+import Hero from "../../components/sections/Hero";
+import FigmaSelectedSection from "../../components/sections/FigmaSelectedSection";
+import PricingCard from "../../components/Pricing-card";
+import TestimonialCarousel from "../../components/TestimonialCarousel";
 import Image from "next/image";
 
 export default function Home() {
@@ -214,6 +215,7 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <FigmaSelectedSection />
     </main>
   );
 }
