@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   Key,
@@ -18,6 +19,14 @@ import {
   CheckCircle,
   Clock,
   TrendingUp,
+  Database,
+  Eye,
+  EyeOff,
+  ArrowUpDown as ArrowUpDownIcon,
+  Trash2,
+  Edit,
+  TestTube,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,6 +48,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 type APIKeyItem = {
   id: string;
@@ -122,6 +145,85 @@ const webhooksData: WebhookItem[] = [
     lastDelivery: "2 hours ago",
     successRate: 85.2,
   },
+];
+
+type DataSourceConnection = {
+  id: string;
+  name: string;
+  provider: string;
+  status: "connected" | "disconnected" | "error" | "testing";
+  priority: number;
+  lastTested: string;
+  requestsToday: number;
+  requestsLimit: number;
+  responseTime: string;
+  uptime: string;
+  credentials: {
+    apiKey?: string;
+    endpoint?: string;
+    username?: string;
+    password?: string;
+  };
+};
+
+const dataSourceConnections: DataSourceConnection[] = [
+  {
+    id: "ds_001",
+    name: "CARFAX Data Source",
+    provider: "CARFAX",
+    status: "connected",
+    priority: 1,
+    lastTested: "2 minutes ago",
+    requestsToday: 1247,
+    requestsLimit: 5000,
+    responseTime: "0.8s",
+    uptime: "99.9%",
+    credentials: {
+      apiKey: "cf_live_••••••••••••••••",
+      endpoint: "https://api.carfax.com/v1"
+    }
+  },
+  {
+    id: "ds_002",
+    name: "AutoCheck Integration",
+    provider: "AutoCheck",
+    status: "connected",
+    priority: 2,
+    lastTested: "5 minutes ago",
+    requestsToday: 892,
+    requestsLimit: 3000,
+    responseTime: "1.2s",
+    uptime: "98.7%",
+    credentials: {
+      apiKey: "ac_prod_••••••••••••••••",
+      endpoint: "https://api.autocheck.com/v2"
+    }
+  },
+  {
+    id: "ds_003",
+    name: "VinAudit Service",
+    provider: "VinAudit",
+    status: "error",
+    priority: 3,
+    lastTested: "1 hour ago",
+    requestsToday: 0,
+    requestsLimit: 2000,
+    responseTime: "N/A",
+    uptime: "0%",
+    credentials: {
+      apiKey: "va_test_••••••••••••••••",
+      endpoint: "https://api.vinaudit.com/v1"
+    }
+  }
+];
+
+const availableProviders = [
+  { value: "carfax", label: "CARFAX", description: "Comprehensive vehicle history reports" },
+  { value: "autocheck", label: "AutoCheck", description: "Experian automotive data" },
+  { value: "vinaudit", label: "VinAudit", description: "Affordable VIN checking service" },
+  { value: "clearvin", label: "ClearVin", description: "Detailed vehicle information" },
+  { value: "vehiclehistory", label: "VehicleHistory", description: "Complete vehicle records" },
+  { value: "custom", label: "Custom API", description: "Your own API endpoint" }
 ];
 
 const apiKeyColumns: ColumnDef<APIKeyItem>[] = [
@@ -414,7 +516,20 @@ const webhookColumns: ColumnDef<WebhookItem>[] = [
 ];
 
 export default function AdminAPIPage() {
-  const [activeTab, setActiveTab] = React.useState<"keys" | "webhooks">("keys");
+  const [activeTab, setActiveTab] = React.useState("data-sources");
+  const [connections, setConnections] = useState<DataSourceConnection[]>(dataSourceConnections);
+  const [showWizard, setShowWizard] = useState(false);
+  const [wizardStep, setWizardStep] = useState(1);
+  const [newConnection, setNewConnection] = useState({
+    name: "",
+    provider: "",
+    apiKey: "",
+    endpoint: "",
+    username: "",
+    password: ""
+  });
+  const [showCredentials, setShowCredentials] = useState<{ [key: string]: boolean }>({});
+  const [testingConnection, setTestingConnection] = useState<string | null>(null);
 
   // Calculate KPI stats
   const totalKeys = apiKeysData.length;
@@ -432,111 +547,511 @@ export default function AdminAPIPage() {
       webhooksData.length
   );
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "connected": return "text-green-600 bg-green-100";
+      case "disconnected": return "text-gray-600 bg-gray-100";
+      case "error": return "text-red-600 bg-red-100";
+      case "testing": return "text-yellow-600 bg-yellow-100";
+      default: return "text-gray-600 bg-gray-100";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "connected": return CheckCircle;
+      case "disconnected": return Clock;
+      case "error": return AlertTriangle;
+      case "testing": return RefreshCw;
+      default: return Clock;
+    }
+  };
+
+  const testConnection = async (connectionId: string) => {
+    setTestingConnection(connectionId);
+    
+    setConnections(prev => prev.map(conn => 
+      conn.id === connectionId ? { ...conn, status: "testing" as const } : conn
+    ));
+
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    setConnections(prev => prev.map(conn => 
+      conn.id === connectionId 
+        ? { 
+            ...conn, 
+            status: Math.random() > 0.3 ? "connected" : "error",
+            lastTested: "Just now",
+            responseTime: `${(Math.random() * 2 + 0.5).toFixed(1)}s`
+          } 
+        : conn
+    ));
+
+    setTestingConnection(null);
+  };
+
+  const handleWizardNext = () => {
+    if (wizardStep < 3) {
+      setWizardStep(wizardStep + 1);
+    } else {
+      const newConn: DataSourceConnection = {
+        id: Date.now().toString(),
+        name: newConnection.name,
+        provider: newConnection.provider,
+        status: "disconnected",
+        priority: connections.length + 1,
+        lastTested: "Never",
+        requestsToday: 0,
+        requestsLimit: 1000,
+        responseTime: "N/A",
+        uptime: "N/A",
+        credentials: {
+          apiKey: newConnection.apiKey,
+          endpoint: newConnection.endpoint,
+          username: newConnection.username,
+          password: newConnection.password
+        }
+      };
+      
+      setConnections([...connections, newConn]);
+      setShowWizard(false);
+      setWizardStep(1);
+      setNewConnection({
+        name: "",
+        provider: "",
+        apiKey: "",
+        endpoint: "",
+        username: "",
+        password: ""
+      });
+    }
+  };
+
+  const updatePriority = (connectionId: string, direction: "up" | "down") => {
+    setConnections(prev => {
+      const sorted = [...prev].sort((a, b) => a.priority - b.priority);
+      const index = sorted.findIndex(conn => conn.id === connectionId);
+      
+      if ((direction === "up" && index > 0) || (direction === "down" && index < sorted.length - 1)) {
+        const targetIndex = direction === "up" ? index - 1 : index + 1;
+        
+        const temp = sorted[index].priority;
+        sorted[index].priority = sorted[targetIndex].priority;
+        sorted[targetIndex].priority = temp;
+      }
+      
+      return sorted;
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">API Management</h1>
-          <p className="text-gray-600">
-            Manage API keys, webhooks, and monitor usage
+          <h1 className="text-2xl font-bold text-gray-900">API Configuration</h1>
+          <p className="text-gray-600 mt-1">
+            Manage data sources, API keys, webhooks, and integrations
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            View Analytics
-          </Button>
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            New API Key
-          </Button>
+        <div className="flex space-x-2">
+          {activeTab === "data-sources" && (
+            <Dialog open={showWizard} onOpenChange={setShowWizard}>
+              <DialogTrigger asChild>
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Data Source
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Data Source Connection</DialogTitle>
+                  <DialogDescription>
+                    Step {wizardStep} of 3: Connect to a new data source
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="py-6">
+                  {wizardStep === 1 && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Select Data Provider</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {availableProviders.map((provider) => (
+                          <button
+                            key={provider.value}
+                            className={`p-4 border rounded-lg text-left hover:bg-gray-50 ${
+                              newConnection.provider === provider.value ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
+                            }`}
+                            onClick={() => setNewConnection({ ...newConnection, provider: provider.value, name: provider.label })}
+                          >
+                            <div className="font-medium">{provider.label}</div>
+                            <div className="text-sm text-gray-600 mt-1">{provider.description}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {wizardStep === 2 && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Connection Details</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Connection Name</label>
+                          <Input
+                            value={newConnection.name}
+                            onChange={(e) => setNewConnection({ ...newConnection, name: e.target.value })}
+                            placeholder="My API Connection"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">API Endpoint</label>
+                          <Input
+                            value={newConnection.endpoint}
+                            onChange={(e) => setNewConnection({ ...newConnection, endpoint: e.target.value })}
+                            placeholder="https://api.example.com/v1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {wizardStep === 3 && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Authentication</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">API Key</label>
+                          <Input
+                            type="password"
+                            value={newConnection.apiKey}
+                            onChange={(e) => setNewConnection({ ...newConnection, apiKey: e.target.value })}
+                            placeholder="Enter your API key"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Username (Optional)</label>
+                            <Input
+                              value={newConnection.username}
+                              onChange={(e) => setNewConnection({ ...newConnection, username: e.target.value })}
+                              placeholder="Username"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Password (Optional)</label>
+                            <Input
+                              type="password"
+                              value={newConnection.password}
+                              onChange={(e) => setNewConnection({ ...newConnection, password: e.target.value })}
+                              placeholder="Password"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between">
+                  <Button
+                    variant="outline"
+                    onClick={() => wizardStep > 1 ? setWizardStep(wizardStep - 1) : setShowWizard(false)}
+                  >
+                    {wizardStep > 1 ? "Previous" : "Cancel"}
+                  </Button>
+                  <Button onClick={handleWizardNext}>
+                    {wizardStep < 3 ? "Next" : "Add Connection"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+          {activeTab === "api-keys" && (
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Create API Key
+            </Button>
+          )}
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Key className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Active API Keys</p>
-              <p className="text-2xl font-bold">
-                {activeKeys}/{totalKeys}
-              </p>
+      {activeTab === "data-sources" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Database className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Connections</p>
+                <p className="text-2xl font-bold">{connections.length}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white p-4 rounded-lg border">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Activity className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Total Requests</p>
-              <p className="text-2xl font-bold">
-                {totalRequests.toLocaleString()}
-              </p>
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Active Sources</p>
+                <p className="text-2xl font-bold">
+                  {connections.filter(c => c.status === "connected").length}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white p-4 rounded-lg border">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Zap className="w-5 h-5 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Avg Usage</p>
-              <p className="text-2xl font-bold">{avgUsagePercent}%</p>
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Zap className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Requests Today</p>
+                <p className="text-2xl font-bold">
+                  {connections.reduce((sum, c) => sum + c.requestsToday, 0).toLocaleString()}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white p-4 rounded-lg border">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Globe className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Webhook Success</p>
-              <p className="text-2xl font-bold">{avgSuccessRate}%</p>
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <Globe className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Avg Response Time</p>
+                <p className="text-2xl font-bold">1.0s</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Key className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Active API Keys</p>
+                <p className="text-2xl font-bold">
+                  {activeKeys}/{totalKeys}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Activity className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Requests</p>
+                <p className="text-2xl font-bold">
+                  {totalRequests.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <Zap className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Avg Usage</p>
+                <p className="text-2xl font-bold">{avgUsagePercent}%</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Globe className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Webhook Success</p>
+                <p className="text-2xl font-bold">{avgSuccessRate}%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
         <button
-          onClick={() => setActiveTab("keys")}
+          onClick={() => setActiveTab("data-sources")}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === "keys"
+            activeTab === "data-sources"
               ? "bg-white text-gray-900 shadow-sm"
               : "text-gray-600 hover:text-gray-900"
           }`}
         >
-          <Key className="w-4 h-4 inline mr-2" />
-          API Keys ({totalKeys})
+          <Database className="w-4 h-4 inline mr-2" />
+          Data Sources ({connections.length})
         </button>
         <button
-          onClick={() => setActiveTab("webhooks")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === "webhooks"
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          <Globe className="w-4 h-4 inline mr-2" />
-          Webhooks ({webhooksData.length})
-        </button>
+           onClick={() => setActiveTab("api-keys")}
+           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+             activeTab === "api-keys"
+               ? "bg-white text-gray-900 shadow-sm"
+               : "text-gray-600 hover:text-gray-900"
+           }`}
+         >
+           <Key className="w-4 h-4 inline mr-2" />
+           API Keys ({apiKeysData.length})
+         </button>
+         <button
+           onClick={() => setActiveTab("webhooks")}
+           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+             activeTab === "webhooks"
+               ? "bg-white text-gray-900 shadow-sm"
+               : "text-gray-600 hover:text-gray-900"
+           }`}
+         >
+           <Globe className="w-4 h-4 inline mr-2" />
+           Webhooks ({webhooksData.length})
+         </button>
       </div>
 
       {/* Content based on active tab */}
-      {activeTab === "keys" && (
+      {activeTab === "data-sources" && (
+        <div className="space-y-6">
+          <div className="grid gap-4">
+            {connections.sort((a, b) => a.priority - b.priority).map((connection) => {
+              const StatusIcon = getStatusIcon(connection.status);
+              return (
+                <div key={connection.id} className="bg-white rounded-lg border p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2 rounded-lg ${getStatusColor(connection.status)}`}>
+                        <StatusIcon className={`w-5 h-5 ${
+                          testingConnection === connection.id ? 'animate-spin' : ''
+                        }`} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{connection.name}</h3>
+                        <p className="text-sm text-gray-600">{connection.provider} • Priority {connection.priority}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updatePriority(connection.id, "up")}
+                        disabled={connection.priority === 1}
+                      >
+                        <ArrowUpDownIcon className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => testConnection(connection.id)}
+                        disabled={testingConnection === connection.id}
+                      >
+                        <TestTube className="w-4 h-4 mr-2" />
+                        {testingConnection === connection.id ? 'Testing...' : 'Test'}
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit Connection
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Settings className="w-4 h-4 mr-2" />
+                            Configure
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Status</p>
+                      <p className={`text-sm font-medium capitalize ${getStatusColor(connection.status)}`}>
+                        {connection.status}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Requests Today</p>
+                      <p className="text-sm font-medium">
+                        {connection.requestsToday.toLocaleString()} / {connection.requestsLimit.toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Response Time</p>
+                      <p className="text-sm font-medium">{connection.responseTime}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Uptime</p>
+                      <p className="text-sm font-medium">{connection.uptime}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500">API Key</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-mono">
+                              {showCredentials[connection.id] 
+                                ? connection.credentials.apiKey 
+                                : connection.credentials.apiKey?.replace(/./g, '•')}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowCredentials(prev => ({
+                                ...prev,
+                                [connection.id]: !prev[connection.id]
+                              }))}
+                            >
+                              {showCredentials[connection.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </Button>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Endpoint</p>
+                          <p className="text-sm font-mono">{connection.credentials.endpoint}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Last Tested</p>
+                        <p className="text-sm">{connection.lastTested}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "api-keys" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

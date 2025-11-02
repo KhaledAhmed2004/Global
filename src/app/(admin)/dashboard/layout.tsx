@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Activity, Settings, Search, Bell, ChevronDown, Database, Users, FileText, Package, Key, Building2 } from "lucide-react";
+import { BarChart3, Activity, Settings, Search, Bell, ChevronDown, Database, Users, FileText, Package, Key, Building2, TrendingUp } from "lucide-react";
 
 export default function AIDashboardLayout({
   children,
@@ -12,6 +12,7 @@ export default function AIDashboardLayout({
     { icon: BarChart3, label: "Overview", href: "/dashboard/overview" },
     { icon: Building2, label: "Franchises", href: "/dashboard/admin/franchises" },
     { icon: FileText, label: "Reports", href: "/dashboard/admin/reports" },
+    { icon: TrendingUp, label: "Analytics & Reporting", href: "/dashboard/admin/analytics" },
     { icon: Package, label: "Packages & Plans", href: "/dashboard/admin/packages" },
     { icon: Key, label: "API Access", href: "/dashboard/admin/api" },
     { icon: Activity, label: "Resellers/Dealers", href: "/dashboard/admin/resellers" },

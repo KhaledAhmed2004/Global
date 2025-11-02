@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, FileText, CheckCircle2, Clock, MoreHorizontal, DollarSign, ArrowUpDown, Car, Shield, AlertTriangle, TrendingUp, Users, Database } from "lucide-react";
+import { Search, FileText, CheckCircle2, Clock, MoreHorizontal, DollarSign, ArrowUpDown, Car, Shield, AlertTriangle, TrendingUp, Users, Database, Plus, Download, RefreshCw, Bell, Activity, Target, Zap, Globe, Calendar, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/ui/data-table";
@@ -25,13 +25,99 @@ type VinReportRow = {
   timestamp: string;
 };
 
+type ActivityItem = {
+  id: string;
+  type: "report" | "customer" | "payment" | "system";
+  title: string;
+  description: string;
+  timestamp: string;
+  status: "success" | "warning" | "error" | "info";
+};
+
 export default function DashboardOverview() {
+  // Enhanced metrics with more franchise-specific data
   const metrics = [
-    { title: "VIN Reports Today", value: "2,847", change: "+18.2%", icon: FileText, color: "bg-blue-500" },
-    { title: "Active Dealers", value: "156", change: "+5.1%", icon: Users, color: "bg-green-500" },
-    { title: "Revenue Today", value: "$28,450", change: "+12.8%", icon: DollarSign, color: "bg-purple-500" },
-    { title: "System Health", value: "99.8%", change: "+0.1%", icon: Shield, color: "bg-emerald-500" },
+    { title: "Reports Sold Today", value: "2,847", change: "+18.2%", icon: FileText, color: "bg-blue-500", trend: "up" },
+    { title: "Active Customers", value: "1,256", change: "+5.1%", icon: Users, color: "bg-green-500", trend: "up" },
+    { title: "Revenue Today", value: "$28,450", change: "+12.8%", icon: DollarSign, color: "bg-purple-500", trend: "up" },
+    { title: "System Uptime", value: "99.8%", change: "+0.1%", icon: Shield, color: "bg-emerald-500", trend: "up" },
+    { title: "Avg. Response Time", value: "1.2s", change: "-0.3s", icon: Zap, color: "bg-orange-500", trend: "down" },
+    { title: "Customer Satisfaction", value: "4.8/5", change: "+0.2", icon: Target, color: "bg-pink-500", trend: "up" },
   ];
+
+  // Quick actions for franchise partners
+  const quickActions = [
+    { title: "Generate Report", icon: FileText, color: "bg-blue-500", action: "generate-report" },
+    { title: "Add Customer", icon: Users, color: "bg-green-500", action: "add-customer" },
+    { title: "View Analytics", icon: TrendingUp, color: "bg-purple-500", action: "view-analytics" },
+    { title: "Export Data", icon: Download, color: "bg-orange-500", action: "export-data" },
+    { title: "API Settings", icon: Database, color: "bg-indigo-500", action: "api-settings" },
+    { title: "Support", icon: Bell, color: "bg-red-500", action: "support" },
+  ];
+
+  // Recent activity feed
+  const recentActivity: ActivityItem[] = [
+    {
+      id: "1",
+      type: "report",
+      title: "VIN Report Generated",
+      description: "Full history report for 1HGBH41JXMN109186 - Honda Accord",
+      timestamp: "2 minutes ago",
+      status: "success"
+    },
+    {
+      id: "2",
+      type: "customer",
+      title: "New Customer Registration",
+      description: "AutoMax Dealership joined your franchise",
+      timestamp: "15 minutes ago",
+      status: "info"
+    },
+    {
+      id: "3",
+      type: "payment",
+      title: "Payment Received",
+      description: "$299.99 from Premium Motors for monthly package",
+      timestamp: "1 hour ago",
+      status: "success"
+    },
+    {
+      id: "4",
+      type: "system",
+      title: "API Rate Limit Warning",
+      description: "Approaching 80% of daily API limit",
+      timestamp: "2 hours ago",
+      status: "warning"
+    },
+    {
+      id: "5",
+      type: "report",
+      title: "Bulk Report Completed",
+      description: "50 VIN reports processed for City Auto Sales",
+      timestamp: "3 hours ago",
+      status: "success"
+    },
+  ];
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case "report": return FileText;
+      case "customer": return Users;
+      case "payment": return DollarSign;
+      case "system": return AlertTriangle;
+      default: return Activity;
+    }
+  };
+
+  const getActivityColor = (status: string) => {
+    switch (status) {
+      case "success": return "text-green-600 bg-green-100";
+      case "warning": return "text-yellow-600 bg-yellow-100";
+      case "error": return "text-red-600 bg-red-100";
+      case "info": return "text-blue-600 bg-blue-100";
+      default: return "text-gray-600 bg-gray-100";
+    }
+  };
 
   const tabs = [
     "All Reports",
@@ -246,24 +332,127 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Top metrics cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((m, i) => (
-          <div key={i} className="bg-white border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      {/* Enhanced Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        {metrics.map((metric, index) => (
+          <div key={index} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-lg ${m.color} flex items-center justify-center`}>
-                <m.icon className="w-6 h-6 text-white" />
+              <div className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center`}>
+                <metric.icon className="w-6 h-6 text-white" />
               </div>
-              <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                {m.change}
-              </span>
+              <div className={`flex items-center text-sm ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                {metric.trend === 'up' ? <ArrowUp className="w-4 h-4 mr-1" /> : <ArrowDown className="w-4 h-4 mr-1" />}
+                {metric.change}
+              </div>
             </div>
             <div>
-              <p className="text-sm text-gray-500 mb-1">{m.title}</p>
-              <p className="text-2xl font-bold text-gray-900">{m.value}</p>
+              <p className="text-sm font-medium text-gray-600">{metric.title}</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{metric.value}</p>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+          <Button variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {quickActions.map((action, index) => (
+            <button
+              key={index}
+              className="flex flex-col items-center p-4 rounded-lg border hover:bg-gray-50 transition-colors"
+              onClick={() => console.log(`Action: ${action.action}`)}
+            >
+              <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+                <action.icon className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-sm font-medium text-gray-700 text-center">{action.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Activity Feed */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+            <Button variant="outline" size="sm">
+              <Calendar className="w-4 h-4 mr-2" />
+              View All
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {recentActivity.map((activity) => {
+              const IconComponent = getActivityIcon(activity.type);
+              return (
+                <div key={activity.id} className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getActivityColor(activity.status)}`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{activity.title}</p>
+                    <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
+                    <p className="text-xs text-gray-400 mt-2">{activity.timestamp}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Performance Summary */}
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">Performance Summary</h2>
+          <div className="space-y-6">
+            {/* Revenue Chart Placeholder */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-600">Monthly Revenue</span>
+                <span className="text-sm text-green-600">+15.3%</span>
+              </div>
+              <div className="h-20 bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg flex items-end justify-center">
+                <div className="text-xs text-gray-500">Chart visualization</div>
+              </div>
+            </div>
+
+            {/* Customer Growth */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-600">Customer Growth</span>
+                <span className="text-sm text-green-600">+8.7%</span>
+              </div>
+              <div className="h-20 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg flex items-end justify-center">
+                <div className="text-xs text-gray-500">Chart visualization</div>
+              </div>
+            </div>
+
+            {/* Top Performing Reports */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-600 mb-3">Top Reports</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Full History</span>
+                  <span className="font-medium">45%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Basic VIN</span>
+                  <span className="font-medium">32%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Dealer Package</span>
+                  <span className="font-medium">23%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Search and filters */}
