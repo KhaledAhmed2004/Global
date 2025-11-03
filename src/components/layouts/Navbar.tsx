@@ -2,94 +2,159 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
-const imgEllipse2643 =
-  "http://localhost:3845/assets/08dedbb5c2ecb10f07bd163945ac9407121680d5.png";
-const imgEllipse2644 =
-  "http://localhost:3845/assets/d45e4f914c108ea888fe8bacf7ad8b9a9a42a510.png";
-const imgEllipse2645 =
-  "http://localhost:3845/assets/c9c05ab30dc682aee262a81393ecbcfdba7279fe.png";
-const Logo =
-  "http://localhost:3845/assets/7882751f98bb060e14223d93a17047153aff47c4.svg";
-const imgVector5325 =
-  "http://localhost:3845/assets/f33c210151e1da77ff7ed774ad16651640006b94.svg";
-const imgMagnifyingGlass =
-  "http://localhost:3845/assets/d08036363f4311e53184c28d1172bb2b4ab38d28.svg";
-const imgUser =
-  "http://localhost:3845/assets/85a626d0e7bacdd9fd2524c779141ee82310edf0.svg";
+export default function Header() {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-export default function FigmaSelectedFrame() {
+  // Get the current pathname from Next.js
+  const pathname = usePathname();
+
+  // Navigation links
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/sample-report", label: "Sample Report" },
+    { href: "/api-config", label: "API Config" },
+    { href: "/vin-search", label: "VIN Search" },
+    { href: "/about-us", label: "About Us" },
+  ];
+
   return (
-    <header className="flex items-center justify-between w-full px-4 md:px-10 py-3 md:py-5">
-      {/* Left Section - Logo & Nav */}
-      <div className="flex items-center gap-6 md:gap-20">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Image src={Logo} alt="logo" width={40} height={48} />
-          <p className="text-lg md:text-xl font-medium italic text-black">
-            Globe VIN
-          </p>
-        </div>
-
-        {/* Nav Links */}
-        <nav className="hidden md:flex gap-6 text-sm md:text-base text-[#919193]">
-          <p className="text-black cursor-pointer">Home</p>
-          <p className="hover:text-black cursor-pointer">Sample Report</p>
-          <p className="hover:text-black cursor-pointer">API Config</p>
-          <Link href="/vinSearch" className="hover:text-black cursor-pointer">VIN Search</Link>
-          <Link href="/dashboard" className="hover:text-black cursor-pointer">Dashboard</Link>
-          <p className="hover:text-black cursor-pointer">About Us</p>
-        </nav>
-      </div>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-3 md:gap-5">
-        {/* Customer Group */}
-        <div className="flex items-center border border-[#c7c7c7] rounded-full px-3 py-2 md:px-4">
-          <div className="flex -space-x-3">
+    <header className="w-full bg-white shadow-sm">
+      {/* Top section: logo + nav + actions */}
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Left: Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <div className="relative h-12 w-10">
             <Image
-              src={imgEllipse2643}
-              alt="customer1"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <Image
-              src={imgEllipse2644}
-              alt="customer2"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <Image
-              src={imgEllipse2645}
-              alt="customer3"
-              width={32}
-              height={32}
-              className="rounded-full"
+              src="/assets/logo.svg"
+              alt="Globe VIN Logo"
+              fill
+              className="object-contain"
             />
           </div>
-          <p className="ml-3 text-sm md:text-base text-black">10K+ Customers</p>
-        </div>
+          <span className="text-lg font-medium italic text-black font-poppins">
+            Globe VIN
+          </span>
+        </Link>
 
-        {/* Divider */}
-        <div className="hidden md:block h-10 w-px bg-gray-300" />
+        {/* Desktop Nav (hidden on mobile) */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {navLinks.map((link) => {
+            // Partial match for nested routes
+            const isActive = pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-base font-normal tracking-tight transition-colors hover:text-black font-roboto ${
+                  isActive ? "text-black font-semibold" : "text-[#919193]"
+                }`}
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-        {/* Icons */}
-        <div className="flex items-center gap-2 md:gap-3">
-          <button className="bg-black rounded-full p-2 md:p-2.5 hover:opacity-80 transition">
-            <Image
-              src={imgMagnifyingGlass}
-              alt="Search"
-              width={24}
-              height={24}
-              className="invert"
-            />
-          </button>
-          <button className="bg-white border border-[#c7c7c7] rounded-full p-2 md:p-2.5 hover:bg-gray-50 transition">
-            <Image src={imgUser} alt="User" width={24} height={24} />
-          </button>
+        {/* Right Section */}
+        <div className="flex items-center gap-3">
+          {/* Customer Badge - visible on tablet and desktop (md and above) */}
+          <div className="hidden md:flex items-center gap-[10px] rounded-[87px] border border-[#c7c7c7] px-4 py-2">
+            <div className="flex -space-x-5">
+              {["customer1.png", "customer2.png", "customer3.png"].map(
+                (img, idx) => (
+                  <div key={idx} className="relative h-8 w-8">
+                    <Image
+                      src={`/assets/${img}`}
+                      alt="Customer"
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+                )
+              )}
+            </div>
+            <span className="text-base font-normal text-black tracking-tight font-inter">
+              10K+ Customers
+            </span>
+          </div>
+
+          {/* Divider - visible on md and above */}
+          <div className="hidden md:block h-10 w-px bg-gray-300"></div>
+
+          {/* Action Icons */}
+          <div className="flex items-center gap-2">
+            {/* Search Button */}
+            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-black transition hover:bg-black/80">
+              <Image
+                src="/assets/search-icon.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
+
+            {/* User Button */}
+            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c7c7c7] bg-white transition hover:bg-zinc-50">
+              <Image
+                src="/assets/user-icon.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
+
+            {/* Mobile Menu Toggle - visible on mobile only */}
+            <button
+              className="flex lg:hidden h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Mobile Nav - slide down animation */}
+      <div
+        className={`lg:hidden overflow-hidden transition-[max-height] duration-500 ease-in-out bg-white shadow-md ${
+          mobileOpen ? "max-h-96" : "max-h-0"
+        }`}
+      >
+        <nav className="flex flex-col px-4 py-3 gap-2">
+          {navLinks.map((link, index) => {
+            const isActive = pathname.startsWith(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)} // close menu when clicked
+                className={`flex items-center px-4 py-3 rounded-lg font-roboto text-base font-normal transition-all duration-300 transform ${
+                  isActive
+                    ? "bg-purple-100 text-purple-700 font-semibold"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                }`}
+                style={{
+                  opacity: mobileOpen ? 1 : 0,
+                  transform: mobileOpen ? "translateX(0)" : "translateX(-20px)",
+                  transitionDelay: `${index * 75}ms`, // stagger effect
+                  transitionProperty: "opacity, transform",
+                }}
+              >
+                {/* Accent bar on the left for active link */}
+                {isActive && (
+                  <div className="w-1 h-full bg-purple-600 rounded-l-lg mr-3"></div>
+                )}
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </header>
   );

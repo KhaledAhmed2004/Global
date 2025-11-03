@@ -1,195 +1,184 @@
+import Image from "next/image";
 import Link from "next/link";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Facebook,
-} from "lucide-react";
 
 export default function Footer() {
+  const quickLinks = [
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/about" },
+    { name: "Our Services", href: "/services" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Contact", href: "/contact" },
+  ];
+
+  const services = [
+    { name: "VIN Search", href: "/vin-search" },
+    { name: "Vehicle History Reports", href: "/reports" },
+    { name: "Accident Reports", href: "/accident-reports" },
+    { name: "Title Information", href: "/title-info" },
+    { name: "Franchise Opportunities", href: "/franchise" },
+  ];
+
+  const socialLinks = [
+    { icon: "/assets/social-facebook.svg", href: "#", label: "Facebook" },
+    { icon: "/assets/social-twitter.svg", href: "#", label: "Twitter" },
+    { icon: "/assets/social-instagram.svg", href: "#", label: "Instagram" },
+    { icon: "/assets/social-linkedin.svg", href: "#", label: "LinkedIn" },
+  ];
+
   return (
-    <footer className="bg-gray-950 text-gray-300 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-white text-xl font-semibold">Global VIN</h3>
-            <p className="text-sm text-gray-400 max-w-sm">
-              Trusted vehicle history and VIN data platform. Empowering buyers,
-              dealers, and franchise partners worldwide with accurate insights.
+    <footer className="border-t border-gray-200 bg-gray-50">
+      <div className="mx-auto max-w-[1920px] px-6 sm:px-10 md:px-16 lg:px-24 pb-0 pt-12">
+        {/* Main Footer Content */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-0 pb-12">
+          {/* Brand Section */}
+          <div className="flex flex-col gap-4 max-w-[400px]">
+            {/* Logo */}
+            <div className="flex items-center gap-1">
+              <div className="relative h-[30px] w-[25px]">
+                <Image
+                  src="/assets/logo.svg"
+                  alt="Globe VIN"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="font-poppins text-base italic leading-6 text-[#101828]">
+                Globe VIN
+              </span>
+            </div>
+
+            {/* Description */}
+            <p className="font-roboto text-sm font-normal leading-[22.75px] text-[#4a5565]">
+              Your trusted partner for comprehensive vehicle history reports
+              worldwide. We deliver authentic data from international sources.
             </p>
-            <div className="flex items-center gap-3">
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
-              >
-                <Twitter className="w-4 h-4 text-gray-300" />
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
-              >
-                <Instagram className="w-4 h-4 text-gray-300" />
-              </a>
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
-              >
-                <Linkedin className="w-4 h-4 text-gray-300" />
-              </a>
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
-              >
-                <Facebook className="w-4 h-4 text-gray-300" />
-              </a>
+
+            {/* Social Links */}
+            <div className="flex flex-wrap items-center gap-3">
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d1d5dc] transition-colors hover:bg-gray-100"
+                  aria-label={social.label}
+                >
+                  <Image src={social.icon} alt="" width={18} height={18} />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Quick Links
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/vinSearch"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  VIN Search
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about-us"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pricing"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  Pricing
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Links Sections */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            {/* Quick Links */}
+            <div className="flex flex-col gap-4">
+              <h3 className="font-poppins text-base font-semibold text-[#101828]">
+                Quick Links
+              </h3>
+              <nav className="flex flex-col gap-3">
+                {quickLinks.map((link, index) => (
+                  <Link
+                    key={index}
+                    href={link.href}
+                    className="font-roboto text-sm text-[#4a5565] transition-colors hover:text-[#101828]"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
 
-          {/* Services */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Services
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/dashboard/admin/reports"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  VIN Reports
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/admin/franchises"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  Franchise Program
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/admin/api"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  API Access
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/admin/resellers"
-                  className="text-gray-400 hover:text-white transition"
-                >
-                  Resellers
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* Services */}
+            <div className="flex flex-col gap-4">
+              <h3 className="font-poppins text-base font-semibold text-[#101828]">
+                Services
+              </h3>
+              <nav className="flex flex-col gap-3">
+                {services.map((service, index) => (
+                  <Link
+                    key={index}
+                    href={service.href}
+                    className="font-roboto text-sm text-[#4a5565] transition-colors hover:text-[#101828]"
+                  >
+                    {service.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Contact
-            </h4>
-            <div className="space-y-3 text-sm text-gray-400">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-gray-500 mt-0.5" />
-                <span>
-                  123 Auto Tech Blvd, Suite 500
-                  <br /> San Francisco, CA 94105
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-gray-500" />
-                <a
-                  href="tel:+10123456789"
-                  className="hover:text-white transition"
-                >
-                  +1 (012) 345-6789
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-gray-500" />
-                <a
-                  href="mailto:support@globalvin.com"
-                  className="hover:text-white transition"
-                >
-                  support@globalvin.com
-                </a>
+            {/* Contact Us */}
+            <div className="flex flex-col gap-4">
+              <h3 className="font-poppins text-base font-semibold text-[#101828]">
+                Contact Us
+              </h3>
+              <div className="flex flex-col gap-4">
+                {/* Address */}
+                <div className="flex items-start gap-2">
+                  <Image
+                    src="/assets/icon-location.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                  />
+                  <p className="font-roboto text-sm text-[#4a5565]">
+                    123 Business Street, Suite 100
+                    <br />
+                    New York, NY 10001
+                  </p>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-start gap-2">
+                  <Image
+                    src="/assets/icon-phone.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                  />
+                  <p className="font-roboto text-sm text-[#4a5565]">
+                    +1 (234) 567-890
+                  </p>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-start gap-2">
+                  <Image
+                    src="/assets/icon-email.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                  />
+                  <p className="font-roboto text-sm text-[#4a5565]">
+                    info@globalvin.com
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-10 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Global VIN. All rights reserved.</p>
-          <div className="flex gap-5">
-            <Link href="/privacy" className="hover:text-gray-300 transition">
+        {/* Bottom Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 py-6 gap-4 sm:gap-0">
+          <p className="font-roboto text-sm text-[#4a5565] text-center sm:text-left">
+            © 2025 Global VIN. All rights reserved.
+          </p>
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-4">
+            <Link
+              href="/privacy"
+              className="font-roboto text-sm text-[#4a5565] transition-colors hover:text-[#101828]"
+            >
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-gray-300 transition">
+            <Link
+              href="/terms"
+              className="font-roboto text-sm text-[#4a5565] transition-colors hover:text-[#101828]"
+            >
               Terms of Service
             </Link>
-            <Link href="/cookies" className="hover:text-gray-300 transition">
+            <Link
+              href="/cookies"
+              className="font-roboto text-sm text-[#4a5565] transition-colors hover:text-[#101828]"
+            >
               Cookie Policy
             </Link>
           </div>

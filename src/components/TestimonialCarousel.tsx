@@ -20,7 +20,7 @@ export default function TestimonialCarousel({ testimonials }: Props) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [viewportWidth, setViewportWidth] = useState<number | null>(null);
-  const intervalMs = 2600; // ~2.6 seconds
+  const intervalMs = 2600;
   const count = testimonials.length;
 
   const positions = useMemo(() => {
@@ -56,7 +56,6 @@ export default function TestimonialCarousel({ testimonials }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [count]);
 
-  // Set viewport width after mount to avoid SSR/client hydration mismatch
   useEffect(() => {
     const update = () => setViewportWidth(window.innerWidth);
     update();
@@ -66,11 +65,20 @@ export default function TestimonialCarousel({ testimonials }: Props) {
 
   const mapStyle = (pos: number) => {
     const clamped = Math.max(-2, Math.min(2, pos));
-
-    // Use SSR-safe fallback until viewport width is known on client
     const w = viewportWidth;
-    const baseX =
-      w == null ? clamped * 220 : w < 768 ? clamped * 160 : clamped * 220;
+
+    // Responsive positioning - reduced offsets for mobile
+    let baseX;
+    if (w == null) {
+      baseX = clamped * 140;
+    } else if (w < 640) {
+      // Mobile: much smaller offset to prevent overflow
+      baseX = clamped * 100;
+    } else if (w < 768) {
+      baseX = clamped * 140;
+    } else {
+      baseX = clamped * 220;
+    }
 
     const scale =
       clamped === 0 ? 1 : clamped === -1 || clamped === 1 ? 0.95 : 0.9;
@@ -83,11 +91,12 @@ export default function TestimonialCarousel({ testimonials }: Props) {
 
   return (
     <div
-      className="relative max-w-6xl mx-auto px-4"
+      className="relative w-full mx-auto px-2 sm:px-4"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative h-[320px] sm:h-[340px] md:h-[380px] overflow-visible">
+      {/* Changed overflow-visible to overflow-hidden to prevent horizontal scroll */}
+      <div className="relative h-[340px] sm:h-[360px] md:h-[400px] overflow-hidden">
         {testimonials.map((t, i) => {
           const pos = positions[i];
           const { x, scale, opacity, z, blur, hidden } = mapStyle(pos);
@@ -117,7 +126,7 @@ export default function TestimonialCarousel({ testimonials }: Props) {
               }}
             >
               {!hidden && (
-                <div className="w-[260px] sm:w-[360px] md:w-[520px] mx-auto">
+                <div className="w-[280px] sm:w-[340px] md:w-[480px] lg:w-[520px] mx-auto">
                   <TestimonialCard
                     rating={t.rating}
                     quote={t.quote}
