@@ -27,7 +27,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-gray-200 bg-gray-50">
-      <div className="mx-auto max-w-[1920px] px-6 sm:px-10 md:px-16 lg:px-24 pb-0 pt-12">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-16 lg:px-24 pb-0 pt-12">
         {/* Main Footer Content */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-0 pb-12">
           {/* Brand Section */}

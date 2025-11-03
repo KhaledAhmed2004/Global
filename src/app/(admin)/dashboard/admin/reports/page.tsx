@@ -22,8 +22,6 @@ import {
   RefreshCw,
   Settings,
   Upload,
-  FileSpreadsheet,
-  FilePdf,
   Mail,
   Share2
 } from "lucide-react";

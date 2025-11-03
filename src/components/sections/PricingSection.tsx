@@ -2,9 +2,12 @@
 
 import { Layers3 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import CheckoutModal from "../CheckoutModal.";
 
 export default function PricingSection() {
-  // Pricing Plan Data (simplified)
+  const [openModal, setOpenModal] = useState(false);
+
   const pricingTiers = [
     {
       name: "Per-Report Sales",
@@ -17,7 +20,6 @@ export default function PricingSection() {
         "Instant digital delivery",
         "75% profit margin typical",
       ],
-      featured: false,
     },
     {
       name: "Dealer Packages",
@@ -30,7 +32,6 @@ export default function PricingSection() {
         "Recurring revenue",
         "Customer retention",
       ],
-      featured: false,
     },
     {
       name: "API Access",
@@ -56,23 +57,19 @@ export default function PricingSection() {
         "Enterprise partnerships",
         "Compound income",
       ],
-      featured: false,
     },
   ];
 
   return (
-    <section className="mx-auto w-full max-w-[1536px] px-6 py-16 sm:py-20 md:py-24">
+    <section className="mx-auto w-full max-w-7xl px-6 py-16 sm:py-20 md:py-24">
       <div className="flex flex-col items-center gap-12">
-        {/* Section Heading */}
         <h2 className="text-center font-poppins text-4xl sm:text-5xl md:text-6xl lg:text-[84px] font-medium leading-normal text-black">
           Pricing List
         </h2>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-[1280px] px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl px-4">
           {pricingTiers.map((tier, index) => {
             const IconComponent = tier.icon;
-
             return (
               <div
                 key={index}
@@ -82,21 +79,7 @@ export default function PricingSection() {
                     : "border border-[#c5c5c5] bg-white text-black"
                 }`}
               >
-                {/* Featured Background */}
-                {tier.featured && (
-                  <div className="pointer-events-none absolute -left-8 -top-64 h-[1609px] w-[1502px] opacity-30">
-                    <Image
-                      src="/assets/pricing-bg.svg"
-                      alt="pricing background"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                )}
-
-                {/* Card Header */}
                 <div className="relative flex flex-col items-center gap-6 px-8 pt-8">
-                  {/* Icon */}
                   <div
                     className={`flex h-12 w-12 items-center justify-center rounded-3xl ${
                       tier.featured ? "bg-white" : "bg-[#764ba2]"
@@ -108,17 +91,13 @@ export default function PricingSection() {
                       }`}
                     />
                   </div>
-
-                  {/* Plan Name */}
                   <h3
-                    className={`text-center font-['Plus_Jakarta_Sans'] text-lg sm:text-xl font-semibold leading-[30px] ${
+                    className={`text-center text-lg sm:text-xl font-semibold leading-[30px] ${
                       tier.featured ? "text-white" : "text-black"
                     }`}
                   >
                     {tier.name}
                   </h3>
-
-                  {/* Price */}
                   <p
                     className={`text-center font-roboto ${
                       tier.featured ? "text-white" : "text-black"
@@ -131,10 +110,9 @@ export default function PricingSection() {
                   </p>
                 </div>
 
-                {/* Features List */}
                 <div className="flex flex-col gap-4 px-8 pb-10 pt-8">
-                  {tier.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-start gap-2">
+                  {tier.features.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-2">
                       <div className="h-6 w-6 shrink-0">
                         <Image
                           src={
@@ -145,7 +123,6 @@ export default function PricingSection() {
                           alt="check icon"
                           width={24}
                           height={24}
-                          className="rounded-xl"
                         />
                       </div>
                       <p className="font-roboto text-base font-medium leading-6">
@@ -155,16 +132,16 @@ export default function PricingSection() {
                   ))}
                 </div>
 
-                {/* CTA Button */}
                 <div className="relative px-8 pb-8">
                   <button
-                    className={`w-full rounded-full px-[18px] py-4 font-['Plus_Jakarta_Sans'] text-base font-semibold transition-all ${
+                    onClick={() => setOpenModal(true)}
+                    className={`w-full rounded-full px-[18px] py-4 text-base font-semibold transition-all ${
                       tier.featured
                         ? "bg-white text-[#080808] hover:bg-gray-100"
                         : "border border-[#d2d2d2] bg-transparent text-black hover:bg-gray-50"
                     }`}
                   >
-                    Get started
+                    Get Started
                   </button>
                 </div>
               </div>
@@ -172,6 +149,9 @@ export default function PricingSection() {
           })}
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      {openModal && <CheckoutModal onClose={() => setOpenModal(false)} />}
     </section>
   );
 }

@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 export default function CTASection() {
   return (
     <section className="py-12 sm:py-16 lg:py-24">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ===== CTA Container ===== */}
         <div className="relative overflow-hidden rounded-2xl shadow-xl">
           {/* Background image */}

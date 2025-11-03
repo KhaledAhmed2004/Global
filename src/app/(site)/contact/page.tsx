@@ -216,14 +216,20 @@ export default function ContactPage() {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              <button
+                className="relative mt-3 sm:mt-0 flex items-center justify-center gap-2 sm:gap-3 
+                         overflow-hidden rounded-full bg-[#764ba2] px-6 sm:px-8 lg:px-10 py-3 sm:py-4 
+                         shadow-[2px_2px_10px_8px_rgba(118,75,162,0.3)] 
+                         transition-all duration-200 hover:bg-[#6a4391] active:scale-95"
+              >
+                <div className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_2px_2px_2px_rgba(255,255,255,0.4),inset_-2px_-2px_2px_rgba(255,255,255,0.4)]" />
+                <p
+                  className="relative font-roboto text-sm sm:text-[15px] lg:text-[16px] font-medium text-white whitespace-nowrap"
+                  style={{ fontVariationSettings: "'wdth' 100" }}
                 >
                   Send Message
-                </button>
-              </div>
+                </p>
+              </button>
             </form>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function Hero() {
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-      <div className="max-w-[1872px] mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Heading + CTAs */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-8">
           {/* Main Heading with Inline Car */}

@@ -1,6 +1,6 @@
 export default function WhatMakesDifferent() {
   return (
-    <section className="mx-auto w-full max-w-[1872px] px-6 py-24 bg-white">
+<section className="mx-auto w-full max-w-7xl px-6 py-24 bg-white">
       <div className="flex flex-col items-center gap-16">
         {/* Header */}
         <div className="flex flex-col items-center gap-4">

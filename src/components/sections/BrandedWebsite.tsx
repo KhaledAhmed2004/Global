@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function BrandedWebsite() {
   return (
-    <section className="mx-auto w-full max-w-[1872px] px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <section className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
       <div className="flex flex-col items-center gap-12">
         {/* Header */}
         <div className="flex flex-col items-center gap-4 px-2 sm:px-0">

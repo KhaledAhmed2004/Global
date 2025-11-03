@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function BrandedMobileApp() {
   return (
-    <section className="mx-auto w-full max-w-[1872px] px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
+    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
       <div className="flex flex-col items-center gap-8 sm:gap-10 lg:gap-12">
         {/* Header */}
         <div className="flex flex-col items-center gap-3 sm:gap-4">

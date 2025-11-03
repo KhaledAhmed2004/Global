@@ -82,7 +82,7 @@ export default function DashboardShow() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-[1872px] px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
+    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
       <div className="flex flex-col items-center gap-8 sm:gap-10 lg:gap-12">
         <h2 className="text-center font-poppins text-3xl font-medium leading-tight text-black sm:text-4xl md:text-5xl lg:text-6xl xl:text-[84px] xl:leading-normal">
           Our Trusted Data Sources

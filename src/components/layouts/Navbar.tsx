@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Get the current pathname from Next.js
+  // Get the current pathname
   const pathname = usePathname();
 
   // Navigation links
@@ -19,12 +19,14 @@ export default function Header() {
     { href: "/api-config", label: "API Config" },
     { href: "/vin-search", label: "VIN Search" },
     { href: "/about-us", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+    { href: "/franchise", label: "Franchise Opportunity" },
   ];
 
   return (
     <header className="w-full bg-white shadow-sm">
       {/* Top section: logo + nav + actions */}
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="relative h-12 w-10">
@@ -44,7 +46,11 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => {
             // Partial match for nested routes
-            const isActive = pathname.startsWith(link.href);
+            const isActive =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.href);
+
             return (
               <Link
                 key={link.href}
@@ -127,7 +133,10 @@ export default function Header() {
       >
         <nav className="flex flex-col px-4 py-3 gap-2">
           {navLinks.map((link, index) => {
-            const isActive = pathname.startsWith(link.href);
+            const isActive =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.href);
 
             return (
               <Link
