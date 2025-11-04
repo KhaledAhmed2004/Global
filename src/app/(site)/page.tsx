@@ -72,7 +72,7 @@ export default function Home() {
     <main className="bg-zinc-50 dark:bg-black">
       <Hero />
       <WhatMakesDifferent />
-      <MarketBooming />
+      {/* <MarketBooming /> */}
       <DashboardShow />
       <BrandedWebsite />
       <BrandedMobileApp />
